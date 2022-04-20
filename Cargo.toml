@@ -9,6 +9,5 @@ edition = "2018"
 rocket = {version = "0.5.0-rc.1", features = ["tls", "json"]}
 rocket_cors = {git = "https://github.com/lawliet89/rocket_cors", branch = "master"}
 diesel = { version = "1.4.4", features = ["postgres"] }
-#rocket_contrib = "0.4.10"
 dotenv = "0.15.0"
 serde = "1.0.130"

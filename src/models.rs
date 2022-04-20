@@ -1,8 +1,8 @@
 use diesel::{Insertable, PgConnection, QueryDsl, Queryable, RunQueryDsl};
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 use crate::schema::feedback;
 
-#[derive(Queryable, Insertable, Serialize)]
+#[derive(Queryable, Insertable, Serialize, Deserialize)]
 #[table_name = "feedback"]
 pub struct Feedback {
     pub title: String,
@@ -10,9 +10,9 @@ pub struct Feedback {
 }
 
 impl Feedback {
-    pub fn new_feed(_title: String, _content: String, conn: &PgConnection) -> bool {
+    pub fn new_feed(feedback: Feedback,  conn: &PgConnection) -> bool {
         diesel::insert_into(crate::schema::feedback::table)
-            .values(& Feedback { title: _title, content: _content})
+            .values(&feedback)
             .execute(conn)
             .is_ok()
     }
