@@ -5,11 +5,11 @@ mod models;
 mod schema;
 
 use diesel::prelude::*;
-use rocket::serde::{Deserialize, json::Json};
+use rocket::serde::json::Json;
 use rocket::{get, post, routes};
 use std::env;
 use dotenv::dotenv;
-use crate::models::Feedback;
+use crate::models::{Feedback, FeedbackQuery};
 
 #[get("/")]
 fn hello() -> &'static str {
@@ -24,6 +24,12 @@ pub fn establish_connection() -> PgConnection {
 }
 
 
+#[get("/feedback")]
+fn get_feedback() -> Json<Vec<FeedbackQuery>> {
+    let conn = establish_connection();
+    let feeds = Feedback::get_feeds(&conn);
+    Json(feeds)
+}
 
 #[post("/feedback", data = "<feedback>")]
 fn send_feedback(feedback: Json<Feedback>) -> Json<bool> {
@@ -41,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cors = rocket_cors::CorsOptions::default().to_cors()?;
 
     rocket::build()
-        .mount("/", routes![hello, send_feedback])
+        .mount("/", routes![hello, send_feedback, get_feedback])
         .attach(cors)
         .launch()
         .await?;
